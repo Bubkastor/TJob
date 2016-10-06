@@ -8,34 +8,12 @@ import java.util.Map;
 
 public class ArticleContent {
 
-    public static final String DEFAULT_URL = "https://www.google.ru/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
-    public static final List<Article> ITEMS = new ArrayList<>();
+    public final List<Article> ITEMS = new ArrayList<>();
+    public final Map<String, Article> ITEM_MAP = new HashMap<>();
 
-    public static final Map<String, Article> ITEM_MAP = new HashMap<>();
-
-    private static final int COUNT = 25;
-
-    static {
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createArticleItem(i));
-        }
-    }
-
-    private static void addItem(Article item) {
+    public void addItem(Article item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
-    }
-
-    private static Article createArticleItem(int position) {
-
-        return new Article(String.valueOf(position)
-                , "Name"
-                , new Date()
-                , "author"
-                , "description"
-                , 0
-                , false
-                ,DEFAULT_URL);
     }
 
     public static class Article{
@@ -49,7 +27,14 @@ public class ArticleContent {
         public boolean is_like_me;
         public final String img_url;
 
-        public Article(String id, String name, Date time, String author, String description,  int count_like, boolean is_like_me, String img_url) {
+        public Article(String id
+                , String name
+                , Date time
+                , String author
+                , String description
+                , int count_like
+                , boolean is_like_me
+                , String img_url) {
             this.id = id;
             this.name = name;
             this.time = time;
