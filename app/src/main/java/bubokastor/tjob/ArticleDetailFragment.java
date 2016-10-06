@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import bubokastor.tjob.dummy.ArticleContent;
+import bubokastor.tjob.Items.ArticleContent;
 
 /**
  * A fragment representing a single Article detail screen.
@@ -49,7 +49,7 @@ public class ArticleDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.name);
             }
         }
     }
@@ -59,9 +59,9 @@ public class ArticleDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.article_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
+
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.article_detail)).setText(mItem.details);
+            ((TextView) rootView.findViewById(R.id.article_detail)).setText(mItem.description);
         }
 
         return rootView;
