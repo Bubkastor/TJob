@@ -1,9 +1,33 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/article_detail"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="bubokastor.tjob.ArticleDetailFragment" />
+    android:textIsSelectable="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/image_container">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_view" />
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/icon_like"
+            android:id="@+id/like_button"
+            android:elevation="0dp"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:cropToPadding="false"
+            android:adjustViewBounds="false"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/article_detail"
+        android:layout_below="@+id/image_container" />
+</RelativeLayout>

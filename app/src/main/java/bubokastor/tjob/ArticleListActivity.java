@@ -10,12 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import bubokastor.tjob.Items.ArticleContent;
 
@@ -25,9 +29,13 @@ import java.util.List;
 public class ArticleListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
-
+    private ServerRequestTask task;
+    private ArticleContent content;
+    public static Context context;
+    public static SimpleItemRecyclerViewAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
@@ -37,35 +45,19 @@ public class ArticleListActivity extends AppCompatActivity {
 
         View recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
+        content = new ArticleContent();
+        task = new ServerRequestTask(content);
+        task.execute();
+        adapter = new SimpleItemRecyclerViewAdapter(content.ITEMS);
         setupRecyclerView((RecyclerView) recyclerView);
-
         if (findViewById(R.id.article_detail_container) != null) {
             mTwoPane = true;
         }
+
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        ArticleContent content = new ArticleContent();
-
-
-        content.addItem(new ArticleContent.Article("id",
-                "Name",
-                new Date(),
-                "Author",
-                "Description",
-                0,
-                true,
-                "asd"));
-        content.addItem(new ArticleContent.Article("id1",
-                "Name2",
-                new Date(),
-                "Author",
-                "Description2",
-                0,
-                false,
-                "asd"));
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(content.ITEMS));
-        //todo Loading items out internet
+        recyclerView.setAdapter(adapter);
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -91,6 +83,8 @@ public class ArticleListActivity extends AppCompatActivity {
 
             if(holder.mItem.is_like_me)
                 holder.mLikeView.setImageResource(R.drawable.icon_like);
+            else
+                holder.mLikeView.setImageResource(R.drawable.icon_dislike);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

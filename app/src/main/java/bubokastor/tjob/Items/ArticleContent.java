@@ -20,7 +20,8 @@ public class ArticleContent {
         public final String id;
 
         public final String name;
-        public final Date time;
+        //public final Date time;
+        public final String time;
         public final String author;
         public final String description;
         public int count_like;
@@ -29,7 +30,7 @@ public class ArticleContent {
 
         public Article(String id
                 , String name
-                , Date time
+                , String time
                 , String author
                 , String description
                 , int count_like
