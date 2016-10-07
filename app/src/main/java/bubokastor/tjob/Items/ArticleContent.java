@@ -9,7 +9,7 @@ import java.util.Map;
 public class ArticleContent {
 
     public final List<Article> ITEMS = new ArrayList<>();
-    public final Map<String, Article> ITEM_MAP = new HashMap<>();
+    public static final Map<String, Article> ITEM_MAP = new HashMap<>();
 
     public void addItem(Article item) {
         ITEMS.add(item);
@@ -40,9 +40,9 @@ public class ArticleContent {
             this.time = time;
             this.author = author;
             this.description = description;
-            this.img_url = img_url;
             this.count_like = count_like;
             this.is_like_me = is_like_me;
+            this.img_url = img_url;
         }
     }
 }
