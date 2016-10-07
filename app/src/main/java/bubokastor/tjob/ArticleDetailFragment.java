@@ -11,28 +11,12 @@ import android.widget.TextView;
 
 import bubokastor.tjob.Items.ArticleContent;
 
-/**
- * A fragment representing a single Article detail screen.
- * This fragment is either contained in a {@link ArticleListActivity}
- * in two-pane mode (on tablets) or a {@link ArticleDetailActivity}
- * on handsets.
- */
 public class ArticleDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
+
     public static final String ARG_ITEM_ID = "item_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
     private ArticleContent.Article mItem;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public ArticleDetailFragment() {
     }
 
@@ -41,9 +25,7 @@ public class ArticleDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
+
             mItem = ArticleContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
