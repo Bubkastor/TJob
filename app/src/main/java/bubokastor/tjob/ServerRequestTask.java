@@ -45,14 +45,9 @@ public class ServerRequestTask extends AsyncTask<String, Void, JSONArray> {
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
-                JSONArray tempArray = new JSONArray(response.toString());
-                JSONArray convertRes = new JSONArray();
-                for(int i = 0; i < tempArray.length(); i++){
-                    convertRes.put(tempArray.getJSONObject(i).getJSONObject("value"));
-                }
-
+                JSONArray answer = new JSONArray(response.toString());
                 urlConnection.disconnect();
-                return convertRes;
+                return answer;
             } else {
                 urlConnection.disconnect();
                 return result;
