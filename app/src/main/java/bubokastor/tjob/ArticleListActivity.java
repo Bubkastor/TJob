@@ -1,38 +1,36 @@
 package bubokastor.tjob;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import bubokastor.tjob.Items.ArticleContent;
-
-import java.util.Date;
 import java.util.List;
+import bubokastor.tjob.Items.ArticleContent;
+import bubokastor.tjob.repository.Database;
+
 
 public class ArticleListActivity extends AppCompatActivity {
+
+
 
     private boolean mTwoPane;
     private ServerRequestTask task;
     private ArticleContent content;
     public static Context context;
     public static SimpleItemRecyclerViewAdapter adapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = this;
@@ -45,7 +43,7 @@ public class ArticleListActivity extends AppCompatActivity {
 
         View recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
-        content = new ArticleContent();
+        content = new ArticleContent(context);
         task = new ServerRequestTask(content);
         task.execute();
         adapter = new SimpleItemRecyclerViewAdapter(content.ITEMS);
@@ -81,10 +79,12 @@ public class ArticleListActivity extends AppCompatActivity {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).name);
 
-            if(holder.mItem.is_like_me)
-                holder.mLikeView.setImageResource(R.drawable.icon_like);
-            else
-                holder.mLikeView.setImageResource(R.drawable.icon_dislike);
+            if(holder.mItem.is_like_me) {
+                holder.mLikeView.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.mLikeView.setVisibility(View.INVISIBLE);
+            }
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

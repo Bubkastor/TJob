@@ -1,33 +1,123 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:textIsSelectable="true">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/image_container">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image_view" />
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/icon_like"
-            android:id="@+id/like_button"
-            android:elevation="0dp"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:cropToPadding="false"
-            android:adjustViewBounds="false"
-            android:scaleType="fitCenter" />
-    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:id="@+id/image_view"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/icon_like"
+        android:adjustViewBounds="false"
+        android:scaleType="fitCenter"
+        android:id="@+id/like_button"
+        app:layout_constraintBottom_toBottomOf="@+id/image_view"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/image_view" />
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:id="@+id/article_detail"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/image_view"
+        android:ellipsize="end"
+        android:maxLines="5"
+        android:layout_marginTop="8dp"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/article_detail"
-        android:layout_below="@+id/image_container" />
-</RelativeLayout>
+        android:id="@+id/date"
+        android:text="date"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/button_show"
+        app:layout_constraintLeft_toRightOf="@+id/tvDate" />
+
+    <TextView
+        android:text="Время :"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="7dp"
+        android:id="@+id/tvDate"
+        tools:layout_editor_absoluteY="331dp" />
+
+    <TextView
+        android:text="author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/author"
+        app:layout_constraintLeft_toRightOf="@+id/tvAuthor"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/button_show" />
+
+    <TextView
+        android:text="count like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/count_like"
+        app:layout_constraintLeft_toRightOf="@+id/tvLike"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/button_show" />
+
+    <Button
+        android:text="Показать"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_show"
+        app:layout_constraintTop_toBottomOf="@+id/article_detail"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        android:elevation="16dp"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        style="@android:style/Widget.Material.Button" />
+
+    <TextView
+        android:text="Автор :"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAuthor"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/button_show"
+        app:layout_constraintLeft_toRightOf="@+id/date"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:text="Нравится :"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvLike"
+        app:layout_constraintTop_toTopOf="@+id/author"
+        app:layout_constraintLeft_toRightOf="@+id/author"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp" />
+
+</android.support.constraint.ConstraintLayout>

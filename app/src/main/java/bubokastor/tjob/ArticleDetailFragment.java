@@ -1,35 +1,33 @@
 package bubokastor.tjob;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.net.Uri;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import org.w3c.dom.Text;
 
 import bubokastor.tjob.Items.ArticleContent;
+import bubokastor.tjob.repository.Database;
 
 public class ArticleDetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
 
     private ArticleContent.Article mItem;
+    private boolean isShow = false;
 
     public ArticleDetailFragment() {
     }
@@ -53,12 +51,46 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.article_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.article_detail, container, false);
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.article_detail)).setText(mItem.description);
+            final TextView description = (TextView) rootView.findViewById(R.id.article_detail);
+            description.setText(mItem.description);
+            ((TextView) rootView.findViewById(R.id.date)).setText(mItem.time);
+            ((TextView) rootView.findViewById(R.id.author)).setText(mItem.author);
+            ((TextView) rootView.findViewById(R.id.count_like)).setText(Integer.toString(mItem.count_like));
             Picasso.with(ArticleListActivity.context)
                     .load(mItem.img_url)
                     .into((ImageView) rootView.findViewById(R.id.image_view));
+            final Button buttonShow = (Button) rootView.findViewById(R.id.button_show);
+            final ObjectAnimator animationShow = ObjectAnimator.ofInt(
+                    description,
+                    "maxLines",
+                    25);
+
+            animationShow.setDuration(500);
+            final ObjectAnimator animationHide = ObjectAnimator.ofInt(
+                    description,
+                    "maxLines",
+                    5);
+
+            animationHide.setDuration(500);
+
+            buttonShow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!isShow) {
+                        animationShow.start();
+                        description.setEllipsize(null);
+                        buttonShow.setText("Скрыть");
+                    }
+                    else{
+                        animationHide.start();
+                        description.setEllipsize(TextUtils.TruncateAt.END);
+                        buttonShow.setText("Показать");
+                    }
+                    isShow = !isShow;
+                }
+            });
             final ImageButton likeButton = (ImageButton) rootView.findViewById(R.id.like_button);
             //TODO Убрать дублирование
             if(mItem.is_like_me)
@@ -68,12 +100,24 @@ public class ArticleDetailFragment extends Fragment {
             likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mItem.is_like_me = !mItem.is_like_me;
-                    if(mItem.is_like_me)
+                    boolean is_like_me = !mItem.is_like_me;
+                    int count_like = mItem.count_like;
+                    if(is_like_me) {
                         likeButton.setImageResource(R.drawable.icon_dislike);
-                    else
+
+                        count_like++;
+                    }
+                    else{
                         likeButton.setImageResource(R.drawable.icon_like);
+                        count_like--;
+                }
+                    ((TextView) rootView.findViewById(R.id.count_like)).setText(Integer.toString(count_like));
+                    Log.d("ASSERT",Integer.toString(mItem.count_like));
                     ArticleListActivity.adapter.notifyDataSetChanged();
+                    String reques = Database.COUNT_LIKE_COLUMN + " = ? OR " + Database.IS_LIKE_ME_COLUMN + " = ?";
+                    mItem.update(reques, new String[]{Integer.toString(count_like), Boolean.toString(is_like_me) } );
+                    mItem.is_like_me = is_like_me;
+                    mItem.count_like = count_like;
                 }
             });
         }
