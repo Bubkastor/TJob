@@ -73,7 +73,7 @@ public class ServerRequestTask extends AsyncTask<String, Void, JSONArray> {
                         it.getInt("count_like"),
                         it.getBoolean("is_like_me"),
                         it.getString("img_url")));
-                ArticleListActivity.adapter.notifyDataSetChanged();
+                ArticleListActivity.sAdapter.notifyDataSetChanged();
             }
             catch (Exception e) {
                 Log.d("JSON", e.getMessage());

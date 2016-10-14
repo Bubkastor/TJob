@@ -16,34 +16,37 @@ import android.widget.TextView;
 import java.util.List;
 
 import bubokastor.tjob.Items.ArticleContent;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class ArticleListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
-    private ServerRequestTask task;
-    private ArticleContent content;
-    public static Context context;
-    public static SimpleItemRecyclerViewAdapter adapter;
+    private ServerRequestTask mTask;
+    private ArticleContent mContent;
+    public  Context mContext;
+    public static SimpleItemRecyclerViewAdapter sAdapter;
 
+    @BindView(R.id.article_list) View mRecyclerView;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        mContext = this;
+        setSupportActionBar(mToolbar);
+        mToolbar.setTitle(getTitle());
 
-        View recyclerView = findViewById(R.id.article_list);
-        assert recyclerView != null;
-        content = new ArticleContent(context);
-        task = new ServerRequestTask(content);
-        task.execute();
-        adapter = new SimpleItemRecyclerViewAdapter(content.ITEMS);
-        setupRecyclerView((RecyclerView) recyclerView);
+        assert mRecyclerView != null;
+        mContent = new ArticleContent(mContext);
+        mTask = new ServerRequestTask(mContent);
+        mTask.execute();
+        sAdapter = new SimpleItemRecyclerViewAdapter(mContent.ITEMS);
+        setupRecyclerView((RecyclerView) mRecyclerView);
         if (findViewById(R.id.article_detail_container) != null) {
             mTwoPane = true;
         }
@@ -51,7 +54,7 @@ public class ArticleListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(sAdapter);
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -81,6 +84,7 @@ public class ArticleListActivity extends AppCompatActivity {
             else{
                 holder.mLikeView.setVisibility(View.INVISIBLE);
             }
+
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -109,23 +113,19 @@ public class ArticleListActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final ImageView mLikeView;
-            public ArticleContent.Article mItem;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @BindView(R.id.name) TextView mIdView;
+            @BindView(R.id.like) ImageView mLikeView;
+            final View mView;
+
+            ArticleContent.Article mItem;
 
             public ViewHolder(View view) {
                 super(view);
+                ButterKnife.bind(this, view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.name);
-                mLikeView = (ImageView) view.findViewById(R.id.like);
             }
 
-            @Override
-            public String toString() {
-                return super.toString() + " '";
-            }
         }
     }
 }
