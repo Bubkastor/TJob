@@ -1,11 +1,8 @@
 package bubokastor.tjob;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.List;
+
 import bubokastor.tjob.Items.ArticleContent;
-import bubokastor.tjob.repository.Database;
 
 
 public class ArticleListActivity extends AppCompatActivity {
-
-
 
     private boolean mTwoPane;
     private ServerRequestTask task;
