@@ -4,18 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.renderscript.Sampler;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import bubokastor.tjob.repository.Database;
 
-import static bubokastor.tjob.ArticleListActivity.context;
 
 public class ArticleContent {
     public final List<Article> ITEMS = new ArrayList<>();
