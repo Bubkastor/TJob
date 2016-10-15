@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="bubokastor.tjob.ArticleListActivity"
+    tools:context="bubokastor.tjob.ui.ArticleListActivity"
     tools:listitem="@layout/article_list_content" />
