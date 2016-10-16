@@ -1,11 +1,11 @@
-package bubokastor.tjob;
+package bubokastor.tjob.ui;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,39 +18,52 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import bubokastor.tjob.Items.ArticleContent;
-import bubokastor.tjob.repository.Database;
+import bubokastor.tjob.R;
+import bubokastor.tjob.api.ApiFactory;
+import bubokastor.tjob.api.ArticleService;
+import bubokastor.tjob.api.RetrofitCallback;
+import bubokastor.tjob.content.Article;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class ArticleDetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
-
-    private ArticleContent.Article mItem;
+    private String mId;
+    private Article mItem;
     private boolean mIsShow = false;
     private Context mContext;
+    private final ArticleService mArticleService;
 
     private ObjectAnimator mAnimationShow;
     private ObjectAnimator mAnimationHide;
 
+    CollapsingToolbarLayout mAppBarLayout;
+
     public ArticleDetailFragment() {
+        mArticleService = ApiFactory.getArticleService();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
-
         if (getArguments().containsKey(ARG_ITEM_ID)) {
 
-            mItem = ArticleContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-
+            mId = (getArguments().getString(ARG_ITEM_ID));
+            for (Article it : ArticleListActivity.sArticles) {
+                if (it.getId().equals(mId)) {
+                    mItem = it;
+                    break;
+                }
+            }
             Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.name);
+            mAppBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            if (mAppBarLayout != null) {
+                mAppBarLayout.setTitle(mItem.getName());
             }
         }
     }
@@ -94,11 +107,10 @@ public class ArticleDetailFragment extends Fragment {
 
     @OnClick(R.id.button_like)
     public void onClickButtonLike(ImageButton button){
-        boolean is_like_me = !mItem.is_like_me;
-        int count_like = mItem.count_like;
+        boolean is_like_me = !mItem.isLikeMe();
+        int count_like = mItem.getCountLike();
         if(is_like_me) {
             button.setImageResource(R.drawable.icon_dislike);
-
             count_like++;
         }
         else{
@@ -106,12 +118,23 @@ public class ArticleDetailFragment extends Fragment {
             count_like--;
         }
         mCountLike.setText(Integer.toString(count_like));
-        Log.d("ASSERT",Integer.toString(mItem.count_like));
         ArticleListActivity.sAdapter.notifyDataSetChanged();
-        String request = Database.COUNT_LIKE_COLUMN + " = ? OR " + Database.IS_LIKE_ME_COLUMN + " = ?";
-        mItem.update(request, new String[]{Integer.toString(count_like), Boolean.toString(is_like_me) } );
-        mItem.is_like_me = is_like_me;
-        mItem.count_like = count_like;
+        mItem.setLikeMe(is_like_me);
+        mItem.setCountLike(count_like);
+        Call<Article> call = mArticleService.sendArticle(mItem.getId(), mItem);
+        call.enqueue(new RetrofitCallback<Article>() {
+            @Override
+            public void onResponse(Call<Article> call, Response<Article> response) {
+                super.onResponse(call, response);
+                Log.d("TAG", response.message());
+            }
+
+            @Override
+            public void onFailure(Call<Article> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.d("TAG", t.getMessage());
+            }
+        });
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,19 +143,20 @@ public class ArticleDetailFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         initAnimation();
         if (mItem != null) {
-            mDescription.setText(mItem.description);
-            mTime.setText(mItem.time);
-            mAuthor.setText(mItem.author);
-            mCountLike.setText(Integer.toString(mItem.count_like));
+            mDescription.setText(mItem.getDescription());
+            mTime.setText(mItem.getTime());
+            mAuthor.setText(mItem.getAuthor());
+            mCountLike.setText(Integer.toString(mItem.getCountLike()));
             Picasso.with(mContext)
-                    .load(mItem.img_url)
+                    .load(mItem.getImgUrl())
                     .into(mImage);
 
-            if(mItem.is_like_me)
+            if(mItem.isLikeMe())
                 mButtonLike.setImageResource(R.drawable.icon_dislike);
             else
                 mButtonLike.setImageResource(R.drawable.icon_like);
         }
         return rootView;
     }
+
 }

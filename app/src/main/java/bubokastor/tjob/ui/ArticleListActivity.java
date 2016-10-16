@@ -1,7 +1,10 @@
-package bubokastor.tjob;
+package bubokastor.tjob.ui;
 
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,20 +18,24 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import bubokastor.tjob.Items.ArticleContent;
+import bubokastor.tjob.R;
+import bubokastor.tjob.content.Article;
+import bubokastor.tjob.database.table.ArticlesTable;
+import bubokastor.tjob.loaders.async.cursor.ArticlesLoader;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ArticleListActivity extends AppCompatActivity {
+public class ArticleListActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private boolean mTwoPane;
-    private ServerRequestTask mTask;
-    private ArticleContent mContent;
-    public  Context mContext;
     public static SimpleItemRecyclerViewAdapter sAdapter;
 
-    @BindView(R.id.article_list) View mRecyclerView;
+    public static List<Article> sArticles;
+
+
+    @BindView(R.id.article_list) RecyclerView mRecyclerView;
     @BindView(R.id.toolbar) Toolbar mToolbar;
 
     @Override
@@ -37,32 +44,56 @@ public class ArticleListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article_list);
         ButterKnife.bind(this);
 
-        mContext = this;
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getTitle());
 
-        assert mRecyclerView != null;
-        mContent = new ArticleContent(mContext);
-        mTask = new ServerRequestTask(mContent);
-        mTask.execute();
-        sAdapter = new SimpleItemRecyclerViewAdapter(mContent.ITEMS);
-        setupRecyclerView((RecyclerView) mRecyclerView);
         if (findViewById(R.id.article_detail_container) != null) {
             mTwoPane = true;
         }
-
+        getLoaderManager().initLoader(R.id.articles_loader, Bundle.EMPTY, this);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(sAdapter);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case R.id.articles_loader:
+                return new ArticlesLoader(this);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        int id = loader.getId();
+        if (id == R.id.articles_loader) {
+            if (data != null && data.moveToFirst()) {
+                List<Article> articles = ArticlesTable.listFromCursor(data);
+                sArticles = articles;
+                sAdapter = new SimpleItemRecyclerViewAdapter(articles);
+                assert  mRecyclerView != null;
+                setupRecyclerView(mRecyclerView);
+            }
+        }
+        getLoaderManager().destroyLoader(id);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<ArticleContent.Article> mValues;
+        private final List<Article> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<ArticleContent.Article> items) {
+        public SimpleItemRecyclerViewAdapter(List<Article> items) {
             mValues = items;
         }
 
@@ -76,9 +107,9 @@ public class ArticleListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).name);
+            holder.mIdView.setText(mValues.get(position).getName());
 
-            if(holder.mItem.is_like_me) {
+            if(holder.mItem.isLikeMe()) {
                 holder.mLikeView.setVisibility(View.VISIBLE);
             }
             else{
@@ -90,17 +121,17 @@ public class ArticleListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(ArticleDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        arguments.putString(ArticleDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
 
                         ArticleDetailFragment fragment = new ArticleDetailFragment();
                         fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
+                        getFragmentManager().beginTransaction()
                                 .replace(R.id.article_detail_container, fragment)
                                 .commit();
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ArticleDetailActivity.class);
-                        intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
 
                         context.startActivity(intent);
                     }
@@ -118,7 +149,7 @@ public class ArticleListActivity extends AppCompatActivity {
             @BindView(R.id.like) ImageView mLikeView;
             final View mView;
 
-            ArticleContent.Article mItem;
+            Article mItem;
 
             public ViewHolder(View view) {
                 super(view);

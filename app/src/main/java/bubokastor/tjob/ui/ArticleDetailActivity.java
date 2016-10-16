@@ -1,4 +1,4 @@
-package bubokastor.tjob;
+package bubokastor.tjob.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import bubokastor.tjob.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -31,7 +32,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
                     getIntent().getStringExtra(ArticleDetailFragment.ARG_ITEM_ID));
             ArticleDetailFragment fragment = new ArticleDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.article_detail_container, fragment)
                     .commit();
         }
