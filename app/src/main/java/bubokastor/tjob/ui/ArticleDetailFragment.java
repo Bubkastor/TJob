@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import bubokastor.tjob.R;
+import bubokastor.tjob.api.ApiFactory;
+import bubokastor.tjob.api.ArticleService;
+import bubokastor.tjob.api.RetrofitCallback;
 import bubokastor.tjob.content.Article;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class ArticleDetailFragment extends Fragment {
 
@@ -30,6 +36,7 @@ public class ArticleDetailFragment extends Fragment {
     private Article mItem;
     private boolean mIsShow = false;
     private Context mContext;
+    private final ArticleService mArticleService;
 
     private ObjectAnimator mAnimationShow;
     private ObjectAnimator mAnimationHide;
@@ -37,13 +44,13 @@ public class ArticleDetailFragment extends Fragment {
     CollapsingToolbarLayout mAppBarLayout;
 
     public ArticleDetailFragment() {
+        mArticleService = ApiFactory.getArticleService();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
-
         if (getArguments().containsKey(ARG_ITEM_ID)) {
 
             mId = (getArguments().getString(ARG_ITEM_ID));
@@ -112,9 +119,22 @@ public class ArticleDetailFragment extends Fragment {
         }
         mCountLike.setText(Integer.toString(count_like));
         ArticleListActivity.sAdapter.notifyDataSetChanged();
-
         mItem.setLikeMe(is_like_me);
         mItem.setCountLike(count_like);
+        Call<Article> call = mArticleService.sendArticle(mItem.getId(), mItem);
+        call.enqueue(new RetrofitCallback<Article>() {
+            @Override
+            public void onResponse(Call<Article> call, Response<Article> response) {
+                super.onResponse(call, response);
+                Log.d("TAG", response.message());
+            }
+
+            @Override
+            public void onFailure(Call<Article> call, Throwable t) {
+                super.onFailure(call, t);
+                Log.d("TAG", t.getMessage());
+            }
+        });
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
